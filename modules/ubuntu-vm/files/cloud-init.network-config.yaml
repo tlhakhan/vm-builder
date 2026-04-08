@@ -1,8 +1,0 @@
-network:
-  version: 2
-  ethernets:
-    en_interfaces:
-      match:
-        name: "en*"
-      dhcp4: yes
-      dhcp6: yes

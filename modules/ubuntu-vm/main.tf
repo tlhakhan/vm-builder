@@ -3,7 +3,7 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "= 0.9.5"
+      version = "= 0.9.7"
     }
   }
 }
@@ -45,9 +45,18 @@ resource "libvirt_cloudinit_disk" "cloudinit_seed" {
     automation_user_pubkey = var.automation_user_pubkey
     console_user           = var.console_user
     console_password       = var.console_password
-    has_gpu_passthru       = var.has_gpu_passthru
   })
-  network_config = file("${path.module}/files/cloud-init.network-config.yaml")
+
+  network_config = <<-EOF
+    network:
+    version: 2
+    ethernets:
+      en_interfaces:
+        match:
+          name: "en*"
+        dhcp4: yes
+        dhcp6: yes
+  EOF
 }
 
 resource "libvirt_volume" "cloudinit_disk" {
@@ -186,21 +195,47 @@ resource "libvirt_domain" "machine" {
         }
       }
     ]
+
+    graphics = [
+      {
+        spice = {
+          auto_port = true
+          listeners = [
+            {
+              address = {}
+            }
+          ]
+        }
+      }
+    ]
+
+    videos = [
+      {
+        model = {
+          type    = "virtio"
+          heads   = 1
+          primary = "yes"
+        }
+      }
+    ]
+
+    hostdevs = var.gpu_pci_bus != null ? [{
+      managed = true
+      subsys_pci = {
+        source = {
+          address = {
+            domain   = 0
+            bus      = var.gpu_pci_bus
+            slot     = 0
+            function = 0
+          }
+        }
+      }
+    }] : null
   }
 
   cpu = {
     mode = "host-passthrough"
   }
-
-  # TODO: support GPU passthrough
-  # xml {
-  #   xslt = var.has_gpu_passthru ? templatefile("${path.module}/templates/gpu-transform.xslt", { gpu_pci_bus = var.gpu_pci_bus }) : file("${path.module}/files/base-transform.xslt")
-  # }
-
-  //  lifecycle {
-  //    ignore_changes = [
-  //      devices.consoles[0].source_path // possible bug? source_path = "/dev/pts/2" -> null, then it complains about inconsistencies after apply
-  //    ]
-  //  }
 
 }

@@ -43,14 +43,10 @@ variable "automation_user_pubkey" {
   type = string
 }
 
-variable "has_gpu_passthru" {
-  type    = bool
-  default = false
-}
-
 variable "gpu_pci_bus" {
-  type    = string
-  default = ""
+  type        = number
+  default     = null
+  description = "The PCI bus number of the GPU to passthrough, if any"
 }
 
 variable "autostart" {
