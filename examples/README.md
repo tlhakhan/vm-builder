@@ -9,6 +9,15 @@ Sets up Intel GPU support on an Ubuntu 24.04 VM:
 3. Installs the HWE kernel (`linux-generic-hwe-24.04`) — required to resolve a kernel bug ([bugzilla.kernel.org/show_bug.cgi?id=220823](https://bugzilla.kernel.org/show_bug.cgi?id=220823)) affecting the `xe` driver on the generic kernel shipped with the Ubuntu 24.04 server image. See the [HWE kernel install instructions](https://canonical-kernel-docs.readthedocs-hosted.com/reference/hwe-kernels/#installing-a-hwe-kernel) for more details.
 4. Installs the Intel GPU user-space drivers and compute stack: OpenCL ICD, Level Zero runtime, media/video acceleration (VA-API, VPL), GSC firmware tools, and ray-tracing support. See the [Intel GPU driver install instructions](https://dgpu-docs.intel.com/driver/client/overview.html) for more details.
 
+## nvidia_gpu_setup.sh
+
+Sets up NVIDIA GPU support on an Ubuntu 24.04 VM:
+
+1. Adds a local apt archives cache as a package source; see below for how to build your own.
+2. Installs the HWE kernel (`linux-generic-hwe-24.04`) for updated hardware support.
+3. Installs `ubuntu-drivers-common` and `alsa-utils`, then uses `ubuntu-drivers` to install the NVIDIA 590 server driver (`nvidia:590-server`). See the [Ubuntu NVIDIA driver install instructions](https://ubuntu.com/server/docs/how-to/graphics/install-nvidia-drivers/) for more details.
+4. Installs `nvidia-utils-590-server` for GPU management utilities (e.g. `nvidia-smi`).
+
 ### Building a local apt cache
 
 If you want to avoid re-downloading packages on every VM build, you can create a simple local apt mirror:
