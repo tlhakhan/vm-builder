@@ -17,9 +17,8 @@ provider "libvirt" {
 }
 
 module "ubuntu-vm" {
-  count  = var.vm_count
   source = "./modules/ubuntu-vm"
-  name   = "${var.vm_name}-${count.index}"
+  name   = var.vm_name
 
   cloud_image_url = var.vm_cloud_image_url
 

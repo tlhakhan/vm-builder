@@ -1,9 +1,3 @@
-variable "vm_count" {
-  type        = number
-  default     = 1
-  description = "The number of VM(s) to create"
-}
-
 variable "vm_name" {
   type        = string
   default     = "vm"
