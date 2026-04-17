@@ -44,9 +44,14 @@ variable "automation_user_pubkey" {
 }
 
 variable "pci_devices" {
-  type        = list(number)
+  type = list(object({
+    domain   = number
+    bus      = number
+    slot     = number
+    function = number
+  }))
   default     = []
-  description = "List of PCI bus numbers of devices to passthrough (e.g. GPU and its audio function)"
+  description = "List of PCI BDF (Bus, Device, Function) address components for passthrough, including domain."
 }
 
 variable "autostart" {

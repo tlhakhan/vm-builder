@@ -219,15 +219,15 @@ resource "libvirt_domain" "machine" {
       }
     ]
 
-    hostdevs = length(var.pci_devices) > 0 ? [for bus in var.pci_devices : {
+    hostdevs = length(var.pci_devices) > 0 ? [for dev in var.pci_devices : {
       managed = true
       subsys_pci = {
         source = {
           address = {
-            domain   = 0
-            bus      = bus
-            slot     = 0
-            function = 0
+            domain   = dev.domain
+            bus      = dev.bus
+            slot     = dev.slot
+            function = dev.function
           }
         }
       }
